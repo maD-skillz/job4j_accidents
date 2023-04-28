@@ -13,6 +13,10 @@ public class AccidentService {
 
     private final AccidentMem accidentMem;
 
+    public Accident create(Accident accident) {
+        return accidentMem.create(accident);
+    }
+
     public Collection<Accident> findAll() {
         return accidentMem.getAll();
     }
