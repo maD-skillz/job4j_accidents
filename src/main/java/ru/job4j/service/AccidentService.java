@@ -17,6 +17,10 @@ public class AccidentService {
         return accidentMem.create(accident);
     }
 
+    public void update(Accident accident) {
+        accidentMem.update(accident);
+    }
+
     public Collection<Accident> findAll() {
         return accidentMem.getAll();
     }

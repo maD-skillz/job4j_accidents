@@ -22,6 +22,10 @@ public class AccidentMem {
         return accident;
     }
 
+    public void update(Accident accident) {
+        store.replace(accident.getId(), accident);
+    }
+
     public Collection<Accident> getAll() {
        return store.values();
     }
