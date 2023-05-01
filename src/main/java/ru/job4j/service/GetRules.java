@@ -1,25 +1,20 @@
 package ru.job4j.service;
 
 
-import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class GetRules {
 
     private GetRules() { }
 
     public static List<Integer> ruleIdsFormRequest(String[] ids) {
-        List<Integer> rIds = new ArrayList<>();
-        for (String s : ids) {
-            rIds.add(Integer.parseInt(s));
-        }
-        return rIds;
+        return Arrays.stream(ids).map(Integer::parseInt).collect(Collectors.toList());
     }
 
     public static boolean check(Set<Rule> rules, AccidentType type) {
