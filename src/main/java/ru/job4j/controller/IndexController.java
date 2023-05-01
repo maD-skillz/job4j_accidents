@@ -4,13 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ru.job4j.model.Rule;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.job4j.service.AccidentService;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -19,9 +14,11 @@ public class IndexController {
     private final AccidentService accidentService;
 
     @GetMapping("/index")
-    public String index(Model model) {
+    public String index(Model model,
+                        @RequestParam(name = "fail", required = false) Boolean fail) {
         model.addAttribute("user", "Petr Arsentev");
         model.addAttribute("accidents", accidentService.findAll());
+        model.addAttribute("fail", fail != null);
         return "index";
     }
 
