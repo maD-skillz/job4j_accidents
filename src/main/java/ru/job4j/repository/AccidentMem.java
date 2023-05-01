@@ -14,14 +14,14 @@ public class AccidentMem {
 
     private final Map<Integer, Accident> store = new ConcurrentHashMap<>();
 
-    private final List<AccidentType> accidentTypes = new ArrayList<>();
+    private final Map<Integer, AccidentType> accidentTypes = new HashMap();
 
     private final Set<Rule> ruleSet = new HashSet<>();
 
     {
-        accidentTypes.add(new AccidentType(1, "Две машины"));
-        accidentTypes.add(new AccidentType(2, "Машина и человек"));
-        accidentTypes.add(new AccidentType(3, "Машина и велосипед"));
+        accidentTypes.put(1, new AccidentType(1, "Две машины"));
+        accidentTypes.put(2, new AccidentType(2, "Машина и человек"));
+        accidentTypes.put(3, new AccidentType(3, "Машина и велосипед"));
 
         ruleSet.add(new Rule(1, "Статья 1"));
         ruleSet.add(new Rule(2, "Статья 2"));
@@ -50,7 +50,7 @@ public class AccidentMem {
     }
 
     public List<AccidentType> getAccidentTypes() {
-        return accidentTypes;
+        return new ArrayList<>(accidentTypes.values());
     }
 
     public AccidentType findAccidentTypeById(int id) {

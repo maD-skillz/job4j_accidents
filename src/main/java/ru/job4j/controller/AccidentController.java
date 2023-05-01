@@ -11,8 +11,6 @@ import ru.job4j.service.AccidentService;
 import ru.job4j.service.GetRules;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -37,7 +35,7 @@ public class AccidentController {
             return "redirect:/createAccident?fail=true";
         }
         Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
-        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId() - 1);
+        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
         if (GetRules.check(rules, type)) {
             return "redirect:/createAccident?fail=true";
         }
@@ -54,7 +52,7 @@ public class AccidentController {
             return "redirect:/createAccident?fail=true";
         }
         Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
-        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId() - 1);
+        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
         if (GetRules.check(rules, type)) {
             return "redirect:/createAccident?fail=true";
         }
