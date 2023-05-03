@@ -30,11 +30,11 @@ public class AccidentMem {
 
     private final AtomicInteger ids = new AtomicInteger(1);
 
-    public Accident create(Accident accident) {
+    public Optional<Accident> create(Accident accident) {
         int id = ids.getAndIncrement();
         accident.setId(id);
         store.put(id, accident);
-        return accident;
+        return Optional.of(accident);
     }
 
     public void update(Accident accident) {
@@ -45,16 +45,16 @@ public class AccidentMem {
        return store.values();
     }
 
-    public Accident findById(int id) {
-       return store.get(id);
+    public Optional<Accident> findById(int id) {
+       return Optional.ofNullable(store.get(id));
     }
 
     public List<AccidentType> getAccidentTypes() {
         return new ArrayList<>(accidentTypes.values());
     }
 
-    public AccidentType findAccidentTypeById(int id) {
-        return accidentTypes.get(id);
+    public Optional<AccidentType> findAccidentTypeById(int id) {
+        return Optional.ofNullable(accidentTypes.get(id));
     }
 
     public List<Rule> getAllRules() {

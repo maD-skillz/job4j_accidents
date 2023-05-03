@@ -8,9 +8,9 @@ import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 import ru.job4j.service.AccidentService;
-import ru.job4j.service.GetRules;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -34,13 +34,14 @@ public class AccidentController {
         if (ids == null) {
             return "redirect:/errorPage";
         }
-        Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
-        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
-        if (GetRules.check(rules, type)) {
+        Set<Rule> rules = accidentService.getRulesByIds(accidentService.ruleIdsFormRequest(ids));
+        Optional<AccidentType> type = accidentService.findAccidentTypeById(
+                accident.getType().getId());
+        if (accidentService.checkRulesAndTypes(rules, type)) {
             return "redirect:/errorPage";
         }
+        accident.setType(type.get());
         accident.setRules(rules);
-        accident.setType(type);
         accidentService.create(accident);
         return "redirect:/index";
     }
@@ -51,13 +52,14 @@ public class AccidentController {
         if (ids == null) {
             return "redirect:/errorPage";
         }
-        Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
-        AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
-        if (GetRules.check(rules, type)) {
+        Set<Rule> rules = accidentService.getRulesByIds(accidentService.ruleIdsFormRequest(ids));
+        Optional<AccidentType> type = accidentService.findAccidentTypeById(
+                accident.getType().getId());
+        if (accidentService.checkRulesAndTypes(rules, type)) {
             return "redirect:/errorPage";
         }
         accident.setRules(rules);
-        accident.setType(type);
+        accident.setType(type.get());
         accidentService.update(accident);
         return "redirect:/index";
     }
@@ -66,8 +68,8 @@ public class AccidentController {
     public String formUpdateTask(Model model, @PathVariable("accId") int id,
                                  @RequestParam(name = "fail", required = false)
     Boolean fail) {
-        Accident accident = accidentService.findById(id);
-        if (accident == null) {
+        Optional<Accident> accident = accidentService.findById(id);
+        if (accident.isEmpty()) {
             return "redirect:/errorPage";
         }
         model.addAttribute("accident", accident);

@@ -8,6 +8,7 @@ import ru.job4j.model.Rule;
 import ru.job4j.repository.AccidentMem;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -15,8 +16,9 @@ public class AccidentService {
 
     private final AccidentMem accidentMem;
 
-    public Accident create(Accident accident) {
-        return accidentMem.create(accident);
+    public Optional<Accident> create(Accident accident) {
+        Optional<Accident> optionalAccident = accidentMem.create(accident);
+        return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
     public void update(Accident accident) {
@@ -27,16 +29,18 @@ public class AccidentService {
         return accidentMem.getAll();
     }
 
-    public Accident findById(int id) {
-        return accidentMem.findById(id);
+    public Optional<Accident> findById(int id) {
+        Optional<Accident> optionalAccident = accidentMem.findById(id);
+        return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
     public List<AccidentType> getAccidentTypes() {
         return accidentMem.getAccidentTypes();
     }
 
-    public AccidentType findAccidentTypeById(int id) {
-        return accidentMem.findAccidentTypeById(id);
+    public Optional<AccidentType> findAccidentTypeById(int id) {
+        Optional<AccidentType> optionalAccidentType = accidentMem.findAccidentTypeById(id);
+        return optionalAccidentType.isEmpty() ? Optional.empty() : optionalAccidentType;
     }
 
     public List<Rule> getAllRules() {
@@ -53,6 +57,20 @@ public class AccidentService {
             }
         }
         return result;
+    }
+
+    public List<Integer> ruleIdsFormRequest(String[] ids) {
+        return Arrays.stream(ids).map(Integer::parseInt).collect(Collectors.toList());
+    }
+
+    public boolean checkRulesAndTypes(Set<Rule> rules, Optional<AccidentType> type) {
+        if (rules == null) {
+            return true;
+        }
+        if (type.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
 }
