@@ -22,4 +22,9 @@ public class IndexController {
         return "index";
     }
 
+    @GetMapping("/errorPage")
+    public String errorPage() {
+        return "errorPage";
+    }
+
 }

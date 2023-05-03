@@ -32,12 +32,12 @@ public class AccidentController {
     public String save(@ModelAttribute Accident accident, HttpServletRequest req) {
         String[] ids = req.getParameterValues("rIds");
         if (ids == null) {
-            return "redirect:/createAccident?fail=true";
+            return "redirect:/errorPage";
         }
         Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
         AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
         if (GetRules.check(rules, type)) {
-            return "redirect:/createAccident?fail=true";
+            return "redirect:/errorPage";
         }
         accident.setRules(rules);
         accident.setType(type);
@@ -49,12 +49,12 @@ public class AccidentController {
     public String updateAccident(@ModelAttribute Accident accident, HttpServletRequest req) {
         String[] ids = req.getParameterValues("rIds");
         if (ids == null) {
-            return "redirect:/createAccident?fail=true";
+            return "redirect:/errorPage";
         }
         Set<Rule> rules = accidentService.getRulesByIds(GetRules.ruleIdsFormRequest(ids));
         AccidentType type = accidentService.findAccidentTypeById(accident.getType().getId());
         if (GetRules.check(rules, type)) {
-            return "redirect:/createAccident?fail=true";
+            return "redirect:/errorPage";
         }
         accident.setRules(rules);
         accident.setType(type);
@@ -68,7 +68,7 @@ public class AccidentController {
     Boolean fail) {
         Accident accident = accidentService.findById(id);
         if (accident == null) {
-            return "redirect:/createAccident?fail=true";
+            return "redirect:/errorPage";
         }
         model.addAttribute("accident", accident);
         model.addAttribute("types", accidentService.getAccidentTypes());
