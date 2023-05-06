@@ -8,6 +8,8 @@ import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 import ru.job4j.service.AccidentService;
+import ru.job4j.service.AccidentTypeService;
+import ru.job4j.service.RuleService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -18,49 +20,31 @@ import java.util.Set;
 public class AccidentController {
     private final AccidentService accidentService;
 
+    private final AccidentTypeService accidentTypeService;
+
+    private final RuleService ruleService;
+
     @GetMapping("/createAccident")
     public String viewCreateAccident(Model model,
                                      @RequestParam(name = "fail", required = false)
     Boolean fail) {
-        model.addAttribute("types", accidentService.getAccidentTypes());
-        model.addAttribute("rules", accidentService.getAllRules());
+        model.addAttribute("types", accidentTypeService.getAccidentTypes());
+        model.addAttribute("rules", ruleService.getAllRules());
         model.addAttribute("fail", fail != null);
         return "createAccident";
     }
 
     @PostMapping("/saveAccident")
-    public String save(@ModelAttribute Accident accident, HttpServletRequest req) {
-        String[] ids = req.getParameterValues("rIds");
-        if (ids == null) {
-            return "redirect:/errorPage";
-        }
-        Set<Rule> rules = accidentService.getRulesByIds(accidentService.ruleIdsFormRequest(ids));
-        Optional<AccidentType> type = accidentService.findAccidentTypeById(
-                accident.getType().getId());
-        if (accidentService.checkRulesAndTypes(rules, type)) {
-            return "redirect:/errorPage";
-        }
-        accident.setType(type.get());
-        accident.setRules(rules);
-        accidentService.create(accident);
+    public String save(@ModelAttribute Accident accident,
+                       @RequestParam(name = "rIds") String[] rids) {
+        accidentService.create(accident, rids);
         return "redirect:/index";
     }
 
     @PostMapping("/updateAccident")
-    public String updateAccident(@ModelAttribute Accident accident, HttpServletRequest req) {
-        String[] ids = req.getParameterValues("rIds");
-        if (ids == null) {
-            return "redirect:/errorPage";
-        }
-        Set<Rule> rules = accidentService.getRulesByIds(accidentService.ruleIdsFormRequest(ids));
-        Optional<AccidentType> type = accidentService.findAccidentTypeById(
-                accident.getType().getId());
-        if (accidentService.checkRulesAndTypes(rules, type)) {
-            return "redirect:/errorPage";
-        }
-        accident.setRules(rules);
-        accident.setType(type.get());
-        accidentService.update(accident);
+    public String updateAccident(@ModelAttribute Accident accident,
+                                 @RequestParam(name = "rIds") String[] rids) {
+        accidentService.update(accident, rids);
         return "redirect:/index";
     }
 
@@ -73,8 +57,8 @@ public class AccidentController {
             return "redirect:/errorPage";
         }
         model.addAttribute("accident", accident);
-        model.addAttribute("types", accidentService.getAccidentTypes());
-        model.addAttribute("rules", accidentService.getAllRules());
+        model.addAttribute("types", accidentTypeService.getAccidentTypes());
+        model.addAttribute("rules", ruleService.getAllRules());
         model.addAttribute("fail", fail != null);
         return "updateAccident";
     }

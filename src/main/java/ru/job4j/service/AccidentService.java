@@ -16,12 +16,24 @@ public class AccidentService {
 
     private final AccidentMem accidentMem;
 
-    public Optional<Accident> create(Accident accident) {
+    private final AccidentTypeService accidentTypeService;
+
+    private final RuleService ruleService;
+
+    public Optional<Accident> create(Accident accident, String[] rids) {
+        Optional<AccidentType> accidentType =
+                accidentTypeService.findAccidentTypeById(accident.getType().getId());
+        accidentType.ifPresent(accident::setType);
+        accident.setRules(ruleService.getRulesByIds(ruleIdsFormRequest(rids)));
         Optional<Accident> optionalAccident = accidentMem.create(accident);
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
-    public void update(Accident accident) {
+    public void update(Accident accident, String[] rids) {
+        Optional<AccidentType> accidentType =
+                accidentTypeService.findAccidentTypeById(accident.getType().getId());
+        accidentType.ifPresent(accident::setType);
+        accident.setRules(ruleService.getRulesByIds(ruleIdsFormRequest(rids)));
         accidentMem.update(accident);
     }
 
@@ -34,43 +46,8 @@ public class AccidentService {
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
-    public List<AccidentType> getAccidentTypes() {
-        return accidentMem.getAccidentTypes();
-    }
-
-    public Optional<AccidentType> findAccidentTypeById(int id) {
-        Optional<AccidentType> optionalAccidentType = accidentMem.findAccidentTypeById(id);
-        return optionalAccidentType.isEmpty() ? Optional.empty() : optionalAccidentType;
-    }
-
-    public List<Rule> getAllRules() {
-        return accidentMem.getAllRules();
-    }
-
-    public Set<Rule> getRulesByIds(List<Integer> ids) {
-        Set<Rule> result = new HashSet<>();
-        for (int i : ids) {
-            for (Rule rule : accidentMem.getAllRules()) {
-                if (rule.getId() == i) {
-                    result.add(rule);
-                }
-            }
-        }
-        return result;
-    }
-
     public List<Integer> ruleIdsFormRequest(String[] ids) {
         return Arrays.stream(ids).map(Integer::parseInt).collect(Collectors.toList());
-    }
-
-    public boolean checkRulesAndTypes(Set<Rule> rules, Optional<AccidentType> type) {
-        if (rules == null) {
-            return true;
-        }
-        if (type.isEmpty()) {
-            return true;
-        }
-        return false;
     }
 
 }
