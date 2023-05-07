@@ -20,4 +20,16 @@ public class RuleMem {
     public List<Rule> getAllRules() {
         return ruleSet.stream().toList();
     }
+
+    public Set<Rule> getRulesByIds(List<Integer> ids) {
+        Set<Rule> result = new HashSet<>();
+        for (int i : ids) {
+            for (Rule rule : ruleSet.stream().toList()) {
+                if (rule.getId() == i) {
+                    result.add(rule);
+                }
+            }
+        }
+        return result;
+    }
 }
