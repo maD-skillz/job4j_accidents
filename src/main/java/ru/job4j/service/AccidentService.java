@@ -4,38 +4,28 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
-import ru.job4j.repository.AccidentMem;
-import ru.job4j.repository.AccidentTypeMem;
-import ru.job4j.repository.RuleMem;
+import ru.job4j.repository.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AccidentService {
 
-    private final AccidentMem accidentMem;
+    private final AccidentJdbcTemplate accidentMem;
 
-    private final AccidentTypeMem accidentTypeMem;
-
-    private final RuleMem ruleMem;
+    private final AccidentTypeJdbcTemplate accidentTypeMem;
 
     public Optional<Accident> create(Accident accident, String[] rids) {
         Optional<AccidentType> accidentType =
-                accidentTypeMem.findAccidentTypeById(accident.getType().getId());
+                accidentTypeMem.findById(accident.getType().getId());
         accidentType.ifPresent(accident::setType);
-        accident.setRules(ruleMem.getRulesByIds(ruleIdsFormRequest(rids)));
-        Optional<Accident> optionalAccident = accidentMem.create(accident);
+        Optional<Accident> optionalAccident = accidentMem.save(accident, rids);
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
     public void update(Accident accident, String[] rids) {
-        Optional<AccidentType> accidentType =
-                accidentTypeMem.findAccidentTypeById(accident.getType().getId());
-        accidentType.ifPresent(accident::setType);
-        accident.setRules(ruleMem.getRulesByIds(ruleIdsFormRequest(rids)));
-        accidentMem.update(accident);
+        accidentMem.update(accident, rids);
     }
 
     public Collection<Accident> findAll() {
@@ -47,8 +37,8 @@ public class AccidentService {
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
-    public List<Integer> ruleIdsFormRequest(String[] ids) {
-        return Arrays.stream(ids).map(Integer::parseInt).collect(Collectors.toList());
+    public void delete(int id) {
+        accidentMem.delete(id);
     }
 
 }
