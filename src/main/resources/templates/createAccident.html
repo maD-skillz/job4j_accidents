@@ -48,15 +48,15 @@
                     </div>
                     <div class="form-group">
                         <label for="type.id">Тип</label>
-                        <select class="form-control" id="type.id"  name="type.id" >
+                        <select class="form-control" id="type.id"  name="typeId" >
                             <option th:each="type: ${types}"
                                     th:text="${type.name}"
                                     th:value="${type.id}"></option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="type.id" name="rIds">Статьи</label>
-                        <select class="form-control" id="rIds" name="rIds" multiple required>
+                        <label for="rule.id">Статьи</label>
+                        <select class="form-control" id="rule.id" name="rIds" multiple required>
                             <option th:each="rule: ${rules}"
                                     th:text="${rule.name}"
                                     th:value="${rule.id}"></option>

@@ -26,4 +26,7 @@ public class Accident {
 
     private Set<Rule> rules;
 
+    public void addRule(Rule rule) {
+        rules.add(rule);
+    }
 }

@@ -3,7 +3,6 @@ package ru.job4j.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Accident;
-import ru.job4j.model.AccidentType;
 import ru.job4j.repository.*;
 
 import java.util.*;
@@ -14,13 +13,8 @@ public class AccidentService {
 
     private final AccidentJdbcTemplate accidentMem;
 
-    private final AccidentTypeJdbcTemplate accidentTypeMem;
-
-    public Optional<Accident> create(Accident accident, String[] rids) {
-        Optional<AccidentType> accidentType =
-                accidentTypeMem.findById(accident.getType().getId());
-        accidentType.ifPresent(accident::setType);
-        Optional<Accident> optionalAccident = accidentMem.save(accident, rids);
+    public Optional<Accident> create(Accident accident, int typeId, String[] rids) {
+        Optional<Accident> optionalAccident = accidentMem.save(accident, typeId, rids);
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 

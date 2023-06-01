@@ -5,15 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.model.Accident;
-import ru.job4j.model.AccidentType;
-import ru.job4j.model.Rule;
 import ru.job4j.service.AccidentService;
 import ru.job4j.service.AccidentTypeService;
 import ru.job4j.service.RuleService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
-import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -36,8 +32,9 @@ public class AccidentController {
 
     @PostMapping("/saveAccident")
     public String save(@ModelAttribute Accident accident,
+                       @RequestParam(name = "typeId") int typeId,
                        @RequestParam(name = "rIds") String[] rids) {
-        accidentService.create(accident, rids);
+        accidentService.create(accident, typeId, rids);
         return "redirect:/index";
     }
 
