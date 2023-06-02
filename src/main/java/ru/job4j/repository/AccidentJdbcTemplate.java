@@ -1,20 +1,15 @@
 package ru.job4j.repository;
 
 import lombok.AllArgsConstructor;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
@@ -90,71 +85,24 @@ public class AccidentJdbcTemplate {
         return Optional.ofNullable(accident);
     }
 
-    public int update(Accident accident, String[] rIds) {
+    public void update(Accident accident, String[] rIds) {
+        String deleteSql = "DELETE FROM accidents_rules ar "
+                + "WHERE ar.accidents_id = ?";
+        jdbc.update(deleteSql, accident.getId());
         String updateSql = "UPDATE accidents "
                 + "SET name = ?, text = ?, address = ?, types_id = ? "
                 + "WHERE id = ?";
-
-        int rowsAffected = jdbc.update(updateSql,
+        jdbc.update(updateSql,
                 accident.getName(),
                 accident.getText(),
                 accident.getAddress(),
                 accident.getType().getId(),
                 accident.getId());
-
-        if (rowsAffected > 0) {
-            String selectRulesSql = "SELECT rules_id FROM accidents_rules WHERE accidents_id = ?";
-            List<Integer> currentRuleIds = jdbc.queryForList(
-                    selectRulesSql, Integer.class, accident.getId());
-            List<Integer> newRuleIds = new ArrayList<>();
-            for (String i : rIds) {
-                newRuleIds.add(Integer.parseInt(i));
-            }
-
-            List<Integer> rulesToDelete = currentRuleIds.stream()
-                    .filter(ruleId -> !newRuleIds.contains(ruleId))
-                    .collect(Collectors.toList());
-
-            List<Integer> rulesToInsert = newRuleIds.stream()
-                    .filter(ruleId -> !currentRuleIds.contains(ruleId))
-                    .collect(Collectors.toList());
-
-            if (!rulesToDelete.isEmpty()) {
-                String deleteSql =
-                        "DELETE FROM accidents_rules WHERE accidents_id = ? AND rules_id = ?";
-                jdbc.batchUpdate(deleteSql, new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setInt(1, accident.getId());
-                        ps.setInt(2, rulesToDelete.get(i));
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        return rulesToDelete.size();
-                    }
-                });
-            }
-
-            if (!rulesToInsert.isEmpty()) {
-                String insertSql =
-                        "INSERT INTO accidents_rules (accidents_id, rules_id) VALUES (?, ?)";
-                jdbc.batchUpdate(insertSql, new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setInt(1, accident.getId());
-                        ps.setInt(2, rulesToInsert.get(i));
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        return rulesToInsert.size();
-                    }
-                });
-            }
+        String insertNewRules =
+                "INSERT INTO accidents_rules (accidents_id, rules_id) VALUES (?, ?) ";
+        for (String rId : rIds) {
+            jdbc.update(insertNewRules, accident.getId(), Integer.parseInt(rId));
         }
-
-        return rowsAffected;
     }
 
     public void delete(int id) {
