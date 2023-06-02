@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://127.0.0.1:5432/job4j_cars</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://127.0.0.1:5432/job4j_accidents</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">password</property>
         <property name="hibernate.connection.pool_size">6</property>
@@ -16,7 +16,9 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="use_sql_comments">true</property>
-        <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
+        <mapping class="ru.job4j.model.Accident" />
+        <mapping class="ru.job4j.model.AccidentType" />
+        <mapping class="ru.job4j.model.Rule" />
     </session-factory>
 </hibernate-configuration>
