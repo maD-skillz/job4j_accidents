@@ -3,8 +3,7 @@ package ru.job4j.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Rule;
-import ru.job4j.repository.RuleHibernate;
-import ru.job4j.repository.RuleMem;
+import ru.job4j.repository.RuleRepository;
 
 import java.util.List;
 
@@ -12,12 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RuleService {
 
-    private final RuleMem ruleMem;
-
-    private final RuleHibernate ruleHibernate;
+    private final RuleRepository ruleRepository;
 
     public List<Rule> getAllRules() {
-        return ruleHibernate.getAll();
+        return ruleRepository.findAll();
     }
 
 }

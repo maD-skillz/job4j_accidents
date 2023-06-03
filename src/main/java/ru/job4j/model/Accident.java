@@ -3,6 +3,7 @@ package ru.job4j.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -25,7 +26,7 @@ public class Accident {
 
     private String address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @ToString.Exclude
     @JoinColumn(name = "types_id")
     private AccidentType type;
@@ -36,7 +37,7 @@ public class Accident {
             joinColumns = { @JoinColumn(name = "accidents_id") },
             inverseJoinColumns = { @JoinColumn(name = "rules_id") }
     )
-    private Set<Rule> rules;
+    private Set<Rule> rules = new HashSet<>();
 
     public void addRule(Rule rule) {
         rules.add(rule);

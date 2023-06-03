@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
-import ru.job4j.model.Rule;
 import ru.job4j.repository.*;
 
 import java.util.*;
@@ -14,41 +13,39 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AccidentService {
 
-    private final AccidentJdbcTemplate accidentMem;
+    private final AccidentRepository accRepository;
 
-    private final AccidentHibernate accidentHibernate;
+    private final AccidentTypeRepository accTypeRepository;
 
-    private final AccidentTypeHibernate accidentTypeHibernate;
-
-    private final RuleHibernate ruleHibernate;
+    private final RuleRepository ruleRepository;
 
     public Optional<Accident> create(Accident accident, int typeId, String[] rids) {
-        Optional<AccidentType> accidentType = accidentTypeHibernate.findById(typeId);
+        Optional<AccidentType> accidentType = accTypeRepository.findById(typeId);
         accidentType.ifPresent(accident::setType);
-        accident.setRules(new HashSet<>(ruleHibernate.getSelectedRules(ruleIdsFormRequest(rids))));
-        Optional<Accident> optionalAccident = accidentHibernate.save(accident);
+        accident.setRules(new HashSet<>(ruleRepository.getSelectedRules(ruleIdsFormRequest(rids))));
+        Optional<Accident> optionalAccident = accRepository.create(accident);
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
     public void update(Accident accident, String[] rids) {
         Optional<AccidentType> accidentType =
-                accidentTypeHibernate.findById(accident.getType().getId());
+                accTypeRepository.findById(accident.getType().getId());
         accidentType.ifPresent(accident::setType);
-        accident.setRules(new HashSet<>(ruleHibernate.getSelectedRules(ruleIdsFormRequest(rids))));
-        accidentHibernate.update(accident);
+        accident.setRules(new HashSet<>(ruleRepository.getSelectedRules(ruleIdsFormRequest(rids))));
+        accRepository.update(accident);
     }
 
     public Collection<Accident> findAll() {
-        return accidentHibernate.getAll();
+        return accRepository.findAll();
     }
 
     public Optional<Accident> findById(int id) {
-        Optional<Accident> optionalAccident = accidentHibernate.findById(id);
+        Optional<Accident> optionalAccident = accRepository.findById(id);
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
     public void delete(int id) {
-        accidentMem.delete(id);
+        accRepository.delete(id);
     }
 
     public List<Integer> ruleIdsFormRequest(String[] ids) {
