@@ -14,7 +14,7 @@ public class RuleService {
     private final RuleRepository ruleRepository;
 
     public List<Rule> getAllRules() {
-        return ruleRepository.findAll();
+        return (List<Rule>) ruleRepository.findAll();
     }
 
 }

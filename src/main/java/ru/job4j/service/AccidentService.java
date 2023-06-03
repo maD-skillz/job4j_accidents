@@ -23,7 +23,7 @@ public class AccidentService {
         Optional<AccidentType> accidentType = accTypeRepository.findById(typeId);
         accidentType.ifPresent(accident::setType);
         accident.setRules(new HashSet<>(ruleRepository.getSelectedRules(ruleIdsFormRequest(rids))));
-        Optional<Accident> optionalAccident = accRepository.create(accident);
+        Optional<Accident> optionalAccident = Optional.of(accRepository.save(accident));
         return optionalAccident.isEmpty() ? Optional.empty() : optionalAccident;
     }
 
@@ -32,11 +32,11 @@ public class AccidentService {
                 accTypeRepository.findById(accident.getType().getId());
         accidentType.ifPresent(accident::setType);
         accident.setRules(new HashSet<>(ruleRepository.getSelectedRules(ruleIdsFormRequest(rids))));
-        accRepository.update(accident);
+        accRepository.save(accident);
     }
 
-    public Collection<Accident> findAll() {
-        return accRepository.findAll();
+    public List<Accident> findAll() {
+        return (List<Accident>) accRepository.findAll();
     }
 
     public Optional<Accident> findById(int id) {
@@ -45,7 +45,7 @@ public class AccidentService {
     }
 
     public void delete(int id) {
-        accRepository.delete(id);
+        accRepository.deleteById(id);
     }
 
     public List<Integer> ruleIdsFormRequest(String[] ids) {

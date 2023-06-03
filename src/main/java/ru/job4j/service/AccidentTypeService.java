@@ -15,7 +15,7 @@ public class AccidentTypeService {
     private final AccidentTypeRepository accTypeRepository;
 
     public List<AccidentType> getAccidentTypes() {
-        return accTypeRepository.findAll();
+        return (List<AccidentType>) accTypeRepository.findAll();
     }
 
     public Optional<AccidentType> findAccidentTypeById(int id) {
