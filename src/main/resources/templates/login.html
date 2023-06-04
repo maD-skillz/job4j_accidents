@@ -6,6 +6,7 @@
 </head>
 <body>
 <div class="container py-3">
+    <a class="nav-item nav-link active" th:href="@{/reg}">Регистрация</a>
     <main class="form-signin">
         <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
         <div th:if="${not #lists.isEmpty(errorMessage)}" class="alert alert-danger" role="alert">
