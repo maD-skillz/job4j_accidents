@@ -36,7 +36,7 @@ public class AccidentService {
     }
 
     public List<Accident> findAll() {
-        return (List<Accident>) accRepository.findAll();
+        return accRepository.findAll();
     }
 
     public Optional<Accident> findById(int id) {

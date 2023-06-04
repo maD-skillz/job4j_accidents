@@ -14,4 +14,7 @@ public interface RuleRepository extends CrudRepository<Rule, Integer> {
     @Query("from Rule r where r.id IN(:ids)")
     List<Rule> getSelectedRules(@Param("ids") List<Integer> ids);
 
+    @Override
+    List<Rule> findAll();
+
 }
