@@ -1,6 +1,7 @@
 package ru.job4j.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,8 @@ public class IndexController {
         model.addAttribute("user", "Petr Arsentev");
         model.addAttribute("accidents", accidentService.findAll());
         model.addAttribute("fail", fail != null);
+        model.addAttribute("user",
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "index";
     }
 
