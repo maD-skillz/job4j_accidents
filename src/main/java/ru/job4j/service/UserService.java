@@ -11,11 +11,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public boolean findUserByName(User user) {
-        User newUser = userRepository.findByUsername(user.getUsername());
-        return newUser.getUsername() != null;
-    }
-
     public User save(User user) {
         return userRepository.save(user);
     }

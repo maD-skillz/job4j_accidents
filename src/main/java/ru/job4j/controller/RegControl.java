@@ -1,13 +1,13 @@
 package ru.job4j.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.job4j.model.User;
 import ru.job4j.repository.AuthorityRepository;
 import ru.job4j.service.UserService;
@@ -22,9 +22,6 @@ public class RegControl {
 
     @PostMapping("/reg")
     public String regSave(@ModelAttribute User user) {
-        if (users.findUserByName(user)) {
-            return "redirect:/reg?fail=true";
-        }
         user.setEnabled(true);
         user.setPassword(encoder.encode(user.getPassword()));
         user.setAuthority(authorities.findByAuthority("ROLE_USER"));
@@ -33,9 +30,16 @@ public class RegControl {
     }
 
     @GetMapping("/reg")
-    public String regPage(Model model,
-                          @RequestParam(name = "fail", required = false) Boolean fail) {
-        model.addAttribute(model.addAttribute("fail", fail != null));
+    public String regPage() {
         return "reg";
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleUniqueConstraintViolation(
+            DataIntegrityViolationException ex) {
+        String message =
+                "The requested operation could not be completed"
+                + " due to a unique constraint violation.";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }
