@@ -20,5 +20,7 @@
         <mapping class="ru.job4j.model.Accident" />
         <mapping class="ru.job4j.model.AccidentType" />
         <mapping class="ru.job4j.model.Rule" />
+        <mapping class="ru.job4j.model.User" />
+        <mapping class="ru.job4j.model.Authority" />
     </session-factory>
 </hibernate-configuration>

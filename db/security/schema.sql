@@ -1,9 +1,9 @@
-CREATE TABLE authorities (
+CREATE TABLE IF NOT EXISTS authorities (
   id serial primary key,
   authority VARCHAR(50) NOT NULL unique
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id serial primary key,
   username VARCHAR(50) NOT NULL unique,
   password VARCHAR(100) NOT NULL,
